@@ -37,7 +37,7 @@ module.exports = {
     const response = loginUser(req.body);
     if (response.error) {
       res.status(400).json({
-        message: response.error.datails[0].message,
+        message: response.error.details[0].message,
         status: 400,
         success: false,
       });
