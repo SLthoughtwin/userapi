@@ -47,11 +47,8 @@ module.exports = {
     }
   },
 
-
-
   accesstokenvarify: (req, res, next) => {
     const token = req.headers.authorization;
-    console.log(token);
    if (!token) {
       return  res.status(400).json({
         message: "A token is required for authentication",
@@ -60,7 +57,6 @@ module.exports = {
       });
     }else{
         const authHeader = req.headers.authorization; 
-        console.log(authHeader)
         const bearerToken = authHeader.split(" ");
         const token = bearerToken[1];
         jwt.verify(token,"secretkeysthepieceof information",(error,payload)=>{
@@ -76,6 +72,6 @@ module.exports = {
         })
     }
 
-  }
+  },
 }
 
