@@ -33,7 +33,7 @@ module.exports = {
         );
         res.status(200).json({
           data: result,
-          statut: 200,
+          status: 200,
           success: true,
           message: "login successfully",
           token: token,
@@ -41,7 +41,7 @@ module.exports = {
       } else {
         res.status(400).json({
           data: "error",
-          statut: 400,
+          status: 400,
           success: false,
           message: "invalid password",
         });
@@ -93,7 +93,7 @@ module.exports = {
         error: error,
         statut: 400,
         success: false,
-        message: "Oop! error",
+        message: "Oops! error",
       });
     }
   },
@@ -114,7 +114,7 @@ module.exports = {
         error: error,
         statut: 400,
         success: false,
-        message: "Oop! error",
+        message: "Oops! error",
       });
     }
   },
