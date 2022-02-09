@@ -1,17 +1,20 @@
 const User = require("../model/model");
 const jwt = require("jsonwebtoken");
+const notifier = require('node-notifier');
 module.exports = {
   signUP: async (req, res) => {
     const result = await new User(req.body);
-    result
-      .save()
-      .then((data) => {
-        res.status(201).json({
-          data: data,
-          statut: 201,
-          success: true,
-          message: "signUP successfully",
-        });
+    result.save()
+      .then((result) => {
+        // res.status(201).json({
+        //   data: data,
+        //   statut: 201,
+        //   success: true,
+        //   message: "signUP successfully",
+        // });
+        // console.log(result);
+        notifier.notify('signUP successfully');
+        res.render('login.hbs');
       })
       .catch((error) => {
         res.status(400).json({
@@ -31,13 +34,16 @@ module.exports = {
           { email: req.body.email },
           "secretkeysthepieceof information"
         );
-        res.status(200).json({
-          data: result,
-          status: 200,
-          success: true,
-          message: "login successfully",
-          token: token,
-        });
+        // res.status(200).json({
+        //   data: result,
+        //   status: 200,
+        //   success: true,
+        //   message: "login successfully",
+        //   token: token,
+        // });
+        // console.log(result[0]._id);
+        notifier.notify('Login successfully..');
+        res.render('userprofile.hbs',{result});
       } else {
         res.status(400).json({
           data: "error",
@@ -58,13 +64,14 @@ module.exports = {
 
   getUserdata: async (req, res) => {
     try {
-      const showuser = await User.find();
-      res.status(200).json({
-        userData: showuser,
-        statut: 200,
-        success: true,
-        message: "found data  successfully..",
-      });
+      const result = await User.find();
+      // res.status(200).json({
+      //   userData: showuser,
+      //   statut: 200,
+      //   success: true,
+      //   message: "found data  successfully..",
+      // });
+      res.render('index.hbs',{result})
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -82,12 +89,14 @@ module.exports = {
         req.body,
         { new: true }
       );
-      res.status(200).json({
-        update_data: update_data,
-        statut: 200,
-        success: true,
-        message: "update data  successfully..",
-      });
+      // res.status(200).json({
+      //   update_data: update_data,
+      //   statut: 200,
+      //   success: true,
+      //   message: "update data  successfully..",
+      // });
+      notifier.notify(' Profile update successfully..');
+      res.redirect('back');
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -103,12 +112,14 @@ module.exports = {
       const delete_data = await User.findByIdAndDelete({
         _id: req.params.id,
       });
-      res.status(200).json({
-        delete_data: delete_data,
-        statut: 200,
-        success: true,
-        message: "delete data successfully..",
-      });
+      // res.status(200).json({
+      //   delete_data: delete_data,
+      //   statut: 200,
+      //   success: true,
+      //   message: "delete data successfully..",
+      // });
+      notifier.notify('Delete User successfully');
+      res.redirect('back');
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -118,4 +129,20 @@ module.exports = {
       });
     }
   },
+
+  edituser: async (req, res) => {
+    try {
+      const _id = req.params.id
+      const result= await User.findById({_id});
+      res.render('edit.hbs',{result})
+    } catch (error) {
+      res.status(404).json({
+        error: error,
+        statut: 400,
+        success: false,
+        message: "Oops! error",
+      });
+    }
+  },
+
 };

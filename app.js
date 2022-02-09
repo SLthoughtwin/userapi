@@ -10,13 +10,15 @@ const static_path = path.join(__dirname,"./views")
 app.use(express.static(static_path));
 app.set("view engine", "hbs");
 
+app.get('/',(req,res)=>{
+  res.render('index.hbs');
+}),
 app.get('/signup',(req,res)=>{
     res.render('signup.hbs');
   }),
-app.get('/login',(req,res)=>{
+app.get('/userlogin',(req,res)=>{
     res.render('login.hbs');
   }),
-
 
 app.use("/",newRoute);
 app.listen(8080,()=>{

@@ -5,8 +5,10 @@ const { signUpValidation, loginValidation ,accesstokenvarify} = require("../Vali
 
 route.post('/signUp', signUpValidation, postmodule.signUP);
 route.post('/login',loginValidation,postmodule.login)
-route.get('/show',accesstokenvarify,postmodule.getUserdata);
-route.patch('/update/:id',accesstokenvarify,postmodule.updateUser);
-route.delete('/delete/:id',accesstokenvarify,postmodule.deleteUser);
+route.get('/show',postmodule.getUserdata);
+route.get('/edit/:id',postmodule.edituser);
+route.post('/update/:id',postmodule.updateUser);
+route.get('/delete/:id',postmodule.deleteUser);
+
 
 module.exports = route;
