@@ -3,7 +3,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Website for user</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link
@@ -46,12 +46,12 @@
         <div class="col-lg-4">
 
           <div class="card mt-5 shadow-lg p-3 " style="width: 18rem; ">
-            <img class="card-img-top" src="https://icons-for-free.com/download-icon-business+costume+male+man+office+user+icon-1320196264882354682_512.png" alt="Card image cap"/>
+            <img class="card-img-top rounded-circle" src={{this.avatar}} alt="Card image cap"/>
             <div class="card-body">
               <h5 class="card-title">{{this.name}}</h5>
               <p class="card-text">Contact : {{this.phone}}</p>
-              <a href="http://localhost:8080/edit/{{this.id}}" class="btn btn-success mr-5 rounded-pill">Edit</a>
-              <a href="http://localhost:8080/delete/{{this.id}}" class="btn btn-danger ml-4 rounded-pill">Delete</a>
+              <a href="http://localhost:8080/edit/{{this.id}}" class="btn btn-success btn-sm mr-5 rounded-pill">Edit</a>
+              <a href="http://localhost:8080/delete/{{this.id}}" class="btn btn-danger btn-sm ml-4 rounded-pill">Delete</a>
 
             </div>
           </div>

@@ -7,7 +7,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}))
 
 const static_path = path.join(__dirname,"./views")
+const static_path_img = path.join(__dirname,"./uploads")
+// console.log(static_path_img);
 app.use(express.static(static_path));
+app.use(express.static(static_path_img))
 app.set("view engine", "hbs");
 
 app.get('/',(req,res)=>{

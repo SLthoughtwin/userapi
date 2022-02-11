@@ -1,10 +1,20 @@
 const User = require("../model/model");
 const jwt = require("jsonwebtoken");
-const notifier = require('node-notifier');
+const notifier = require("node-notifier");
 module.exports = {
   signUP: async (req, res) => {
-    const result = await new User(req.body);
-    result.save()
+    const obj = {
+      name: req.body.name,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      phone: req.body.phone,
+      password: req.body.password,
+      cpassword: req.body.cpassword,
+      avatar: req.file.filename,
+    };
+    const result = await new User(obj);
+    result
+      .save()
       .then((result) => {
         // res.status(201).json({
         //   data: data,
@@ -13,8 +23,8 @@ module.exports = {
         //   message: "signUP successfully",
         // });
         // console.log(result);
-        notifier.notify('signUP successfully');
-        res.render('login.hbs');
+        notifier.notify("signUP successfully");
+        res.render("login.hbs");
       })
       .catch((error) => {
         res.status(400).json({
@@ -42,8 +52,8 @@ module.exports = {
         //   token: token,
         // });
         // console.log(result[0]._id);
-        notifier.notify('Login successfully..');
-        res.render('userprofile.hbs',{result});
+        notifier.notify("Login successfully..");
+        res.render("userprofile.hbs", { result });
       } else {
         res.status(400).json({
           data: "error",
@@ -71,7 +81,7 @@ module.exports = {
       //   success: true,
       //   message: "found data  successfully..",
       // });
-      res.render('index.hbs',{result})
+      res.render("index.hbs", { result });
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -95,8 +105,8 @@ module.exports = {
       //   success: true,
       //   message: "update data  successfully..",
       // });
-      notifier.notify(' Profile update successfully..');
-      res.redirect('back');
+      notifier.notify(" Profile update successfully..");
+      return res.redirect("http://localhost:8080/show");
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -118,8 +128,8 @@ module.exports = {
       //   success: true,
       //   message: "delete data successfully..",
       // });
-      notifier.notify('Delete User successfully');
-      res.redirect('back');
+      notifier.notify("Delete User successfully");
+      res.redirect("back");
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -132,9 +142,9 @@ module.exports = {
 
   edituser: async (req, res) => {
     try {
-      const _id = req.params.id
-      const result= await User.findById({_id});
-      res.render('edit.hbs',{result})
+      const _id = req.params.id;
+      const result = await User.findById({ _id });
+      res.render("edit.hbs", { result });
     } catch (error) {
       res.status(404).json({
         error: error,
@@ -144,5 +154,4 @@ module.exports = {
       });
     }
   },
-
 };

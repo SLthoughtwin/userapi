@@ -1,7 +1,30 @@
 const Joi = require("joi");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const multer = require("multer");
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + file.fieldname + path.extname(file.originalname));
+  },
+});
+const uploads = multer({ storage: fileStorage }).single("avatar");
 
 module.exports = {
+  uploadfile: (req, res, next) => {
+    uploads(req, res, (err) => {
+      if (!err) {
+        next();
+        return req.file.originalname;
+      } else {
+        res.send(err);
+      }
+    });
+  },
+
   signUpValidation: (req, res, next) => {
     const validateUser = (user) => {
       const JoiSchema = Joi.object({
@@ -9,7 +32,7 @@ module.exports = {
         lastname: Joi.string().min(5).max(30).required(),
         email: Joi.string().email().min(5).max(50).required(),
         phone: Joi.number().required(),
-        password:Joi.string().required(),
+        password: Joi.string().required(),
         cpassword: Joi.ref("password"),
       }).options({ abortEarly: false });
       return JoiSchema.validate(user);
@@ -49,29 +72,31 @@ module.exports = {
 
   accesstokenvarify: (req, res, next) => {
     const token = req.headers.authorization;
-   if (!token) {
-      return  res.status(400).json({
+    if (!token) {
+      return res.status(400).json({
         message: "A token is required for authentication",
         status: 400,
         success: false,
       });
-    }else{
-        const authHeader = req.headers.authorization; 
-        const bearerToken = authHeader.split(" ");
-        const token = bearerToken[1];
-        jwt.verify(token,"secretkeysthepieceof information",(error,payload)=>{
-            if(error){
-              res.status(400).json({
-                message: "invalid token",
-                status: 400,
-                success: false,
-              });
-            }else{
-               next();
-            }
-        })
+    } else {
+      const authHeader = req.headers.authorization;
+      const bearerToken = authHeader.split(" ");
+      const token = bearerToken[1];
+      jwt.verify(
+        token,
+        "secretkeysthepieceof information",
+        (error, payload) => {
+          if (error) {
+            res.status(400).json({
+              message: "invalid token",
+              status: 400,
+              success: false,
+            });
+          } else {
+            next();
+          }
+        }
+      );
     }
-
   },
-}
-
+};
