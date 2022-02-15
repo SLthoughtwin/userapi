@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
-const mailsystem = (req,res,next)=>{
+module.exports = { 
+  mailsystem :(req,res,next)=>{
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -27,6 +28,35 @@ const mailsystem = (req,res,next)=>{
     })
   
   
-  }
+  },
 
-  module.exports = mailsystem;
+
+
+   mailfunction :(email,link)=>{
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth:{
+        user : 'sourabhlodhi.thoughtwin@gmail.com',
+        pass : "sourabh12345",
+      }
+    });
+    const mailOption = {
+      from : 'sourabhlodhi.thoughtwin@gmail.com',
+      to : email,
+      subject : 'testing and testing',
+      text : link
+    }
+    
+    transporter.sendMail(mailOption)
+    .then((res)=>{
+      // next();
+      console.log('mail send successfully')
+    }).catch((err)=>{
+      console.log('oops! error',err)
+    })
+  
+  
+  },
+
+}

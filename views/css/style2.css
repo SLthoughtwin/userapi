@@ -8,7 +8,7 @@ body {
 }
 
 .profile-button {
-    background: #BA68C8;
+    background: hsl(202, 89%, 44%);
     box-shadow: none;
     border: none
 }

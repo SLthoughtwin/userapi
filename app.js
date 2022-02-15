@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config()
 const path = require('path');
 require('./db/connection');
 const newRoute = require('./router/route');
@@ -22,6 +23,11 @@ app.get('/signup',(req,res)=>{
 app.get('/userlogin',(req,res)=>{
     res.render('login.hbs');
   }),
+
+app.get('/forgot-password',(req,res,next)=>{
+    res.render('forgot-password')
+});
+
 
 app.use("/",newRoute);
 app.listen(8080,()=>{

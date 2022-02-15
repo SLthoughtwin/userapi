@@ -1,28 +1,23 @@
 const User = require("../model/model");
 const jwt = require("jsonwebtoken");
 const notifier = require("node-notifier");
+const async = require("hbs/lib/async");
+const {mailfunction} = require('../sendmail/sendmail');
+const {bcryptpassword,bcryptmatch} = require('../Validation/index')
+
+
 module.exports = {
   signUP: async (req, res) => {
-    const obj = {
-      name: req.body.name,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      phone: req.body.phone,
-      password: req.body.password,
-      cpassword: req.body.cpassword,
-      avatar: req.file.filename,
-    };
+    const password = req.body.password;
+    const cpassword = req.body.cpassword;
+    const response = await bcryptpassword(password,cpassword);
+    const obj = req.body;
+    obj.password = response.pass;
+    obj.cpassword = response.cpass;
+    obj.avatar = req.file.filename;
     const result = await new User(obj);
-    result
-      .save()
-      .then((result) => {
-        // res.status(201).json({
-        //   data: data,
-        //   statut: 201,
-        //   success: true,
-        //   message: "signUP successfully",
-        // });
-        // console.log(result);
+    result.save()
+      .then((data) => {
         notifier.notify("signUP successfully");
         res.render("login.hbs");
       })
@@ -36,24 +31,20 @@ module.exports = {
       });
   },
 
-  login: async (req, res) => {
+  login: async (req, res,next) => {
     const result = await User.find({ email: req.body.email });
     if (result.length > 0) {
-      if (result[0].password == req.body.password) {
+      const db_pass = result[0].password;
+      const user_pass = req.body.password;
+      const match =  await bcryptmatch(user_pass,db_pass);
+      if (match === true) {
         const token = jwt.sign(
           { email: req.body.email },
-          "secretkeysthepieceof information"
+          process.env.SECRET_KEY
         );
-        // res.status(200).json({
-        //   data: result,
-        //   status: 200,
-        //   success: true,
-        //   message: "login successfully",
-        //   token: token,
-        // });
-        // console.log(result[0]._id);
         notifier.notify("Login successfully..");
         res.render("userprofile.hbs", { result });
+        next();
       } else {
         res.status(400).json({
           data: "error",
@@ -75,12 +66,6 @@ module.exports = {
   getUserdata: async (req, res) => {
     try {
       const result = await User.find();
-      // res.status(200).json({
-      //   userData: showuser,
-      //   statut: 200,
-      //   success: true,
-      //   message: "found data  successfully..",
-      // });
       res.render("index.hbs", { result });
     } catch (error) {
       res.status(404).json({
@@ -99,12 +84,6 @@ module.exports = {
         req.body,
         { new: true }
       );
-      // res.status(200).json({
-      //   update_data: update_data,
-      //   statut: 200,
-      //   success: true,
-      //   message: "update data  successfully..",
-      // });
       notifier.notify(" Profile update successfully..");
       return res.redirect("http://localhost:8080/show");
     } catch (error) {
@@ -154,4 +133,75 @@ module.exports = {
       });
     }
   },
+
+  forgotpassword:async(req,res)=>{
+       
+    const email  = req.body.email;
+    const result = await User.findOne({email:req.body.email});
+    if(!result)
+    {
+    res.send('user is not registered')
+    return;
+    }
+    else{
+        // console.log(result[0].id)
+        const secret = result.password;
+        const payload = {
+          id : result.id,
+          email : result.email
+        }
+    
+        const token = jwt.sign(payload,secret,{expiresIn : '5m'});
+        const link = `http://localhost:8080/reset-password/${result.id}/${token}`;
+        mailfunction(email,link);
+        res.send('password reset link has been sent to your gmail account...')   
+    }
+
+
+  },
+
+  resetfunction:async(req,res)=>{
+    const id = req.params.id;
+    const token = req.params.token
+    const result = await User.findOne({_id:id})
+    if(!result){
+        res.send('invalid user')
+    }else{
+        const secret = result.password;
+        try{
+            const payload = jwt.verify(token,secret);
+            res.render('reset-password',{email:result.email})
+
+        }catch(error){
+           console.log(error.message);
+           res.send(error.message);
+        }
+    }
+},
+
+resetpassword:async(req,res,next)=>{
+  const { id, token } = req.params;
+  const result = await User.findOne({_id:id})
+  if(!result){
+      console.log('invalid user');
+      res.send('invalid user');
+      return;
+  }
+  const secret = result.password;
+  try{
+       const payload = jwt.verify(token,secret);
+       const password = req.body.password;
+       const cpassword = req.body.cpassword;
+       const bcryptpass = await bcryptpassword(password,cpassword);
+       req.body.password = bcryptpass.pass;
+       req.body.cpassword = bcryptpass.cpass;
+       const update_data = await User.findByIdAndUpdate({ _id: req.params.id },req.body,{ new : true});
+       notifier.notify('password update successfully..')
+       res.redirect('http://localhost:8080/userlogin');
+  }catch(error){
+      console.log(error.message);
+      res.send(error.message);
+  }
+}
+
 };

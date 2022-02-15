@@ -2,6 +2,8 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const multer = require("multer");
+const async = require("hbs/lib/async");
+const bycrypt = require('bcryptjs')
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,7 +31,7 @@ module.exports = {
     const validateUser = (user) => {
       const JoiSchema = Joi.object({
         name: Joi.string().min(3).max(30).required(),
-        lastname: Joi.string().min(5).max(30).required(),
+        lastname: Joi.string().min(3).max(30).required(),
         email: Joi.string().email().min(5).max(50).required(),
         phone: Joi.number().required(),
         password: Joi.string().required(),
@@ -99,4 +101,14 @@ module.exports = {
       );
     }
   },
+
+  bcryptpassword:async(password,cpassword)=>{
+    const pass = await bycrypt.hash(password,10)
+    const cpass = await bycrypt.hash(cpassword,10)
+    return {pass,cpass};
+  },
+  bcryptmatch:async(user_pass,db_pass)=>{
+    const matchpass = await bycrypt.compare(user_pass,db_pass)
+    return matchpass;
+  }
 };
