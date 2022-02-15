@@ -7,7 +7,7 @@ module.exports = {
       service: 'gmail',
       auth:{
         user : 'sourabhlodhi.thoughtwin@gmail.com',
-        pass : "sourabh12345",
+        pass : "*********",
       }
     });
     
@@ -38,7 +38,7 @@ module.exports = {
       service: 'gmail',
       auth:{
         user : 'sourabhlodhi.thoughtwin@gmail.com',
-        pass : "sourabh12345",
+        pass : "*********",
       }
     });
     const mailOption = {
