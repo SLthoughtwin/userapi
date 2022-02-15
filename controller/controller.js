@@ -46,20 +46,12 @@ module.exports = {
         res.render("userprofile.hbs", { result });
         next();
       } else {
-        res.status(400).json({
-          data: "error",
-          status: 400,
-          success: false,
-          message: "invalid password",
-        });
+        notifier.notify('invalid login details')
+        res.redirect('back');
       }
     } else {
-      res.status(400).json({
-        data: "error",
-        statut: 400,
-        success: false,
-        message: "invalid email",
-      });
+      notifier.notify('invalid login details')
+      res.redirect('back');
     }
   },
 
